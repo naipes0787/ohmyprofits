@@ -1,0 +1,180 @@
+@import './tokens.css';
+@import 'tailwindcss';
+
+/* =============================================================================
+ * Tailwind v4 theme — wires CSS custom properties into utility classes.
+ * Use bg-bg, text-ink, border-line, etc. throughout the app.
+ *
+ * @theme inline keeps utility classes resolving the var() at runtime so the
+ * --omp-* overrides in tokens.css (light/dark/.theme-*) keep flowing through.
+ * ============================================================================= */
+@theme inline {
+  --color-bg: var(--omp-bg);
+  --color-surface: var(--omp-surface);
+  --color-surface-sunk: var(--omp-surface-sunk);
+  --color-ink: var(--omp-ink);
+  --color-ink-muted: var(--omp-ink-muted);
+  --color-line: var(--omp-line);
+  --color-line-strong: var(--omp-line-strong);
+  --color-accent: var(--omp-accent);
+  --color-accent-ink: var(--omp-accent-ink);
+  --color-accent-text: var(--omp-accent-text);
+  --color-accent-2: var(--omp-accent-2);
+  --color-positive: var(--omp-positive);
+  --color-warning: var(--omp-warning);
+  --color-danger: var(--omp-danger);
+  --color-lavender: var(--omp-lavender);
+
+  --font-display: var(--omp-font-display);
+  --font-body: var(--omp-font-body);
+  --font-mono: var(--omp-font-mono);
+
+  --text-step--1: var(--omp-step--1);
+  --text-step-0: var(--omp-step-0);
+  --text-step-1: var(--omp-step-1);
+  --text-step-2: var(--omp-step-2);
+  --text-step-3: var(--omp-step-3);
+  --text-step-4: var(--omp-step-4);
+  --text-step-5: var(--omp-step-5);
+  --text-step-6: var(--omp-step-6);
+
+  --radius-xs: var(--omp-radius-xs);
+  --radius-sm: var(--omp-radius-sm);
+  --radius-md: var(--omp-radius-md);
+
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+}
+
+/* — Reset / base —
+ * In `@layer base` so Tailwind utility classes (which live in @layer utilities)
+ * win the cascade. Without the layer, an unlayered `button { color: inherit }`
+ * would beat `.text-[color:var(--color-accent-ink)]` even though the latter is
+ * more specific. */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    margin: 0;
+    background: var(--omp-bg);
+    color: var(--omp-ink);
+    font-family: var(--omp-font-body);
+    font-size: var(--omp-step-0);
+    line-height: 1.55;
+    font-feature-settings: 'ss01', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--omp-font-display);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  h1 {
+    font-size: var(--omp-step-5);
+    text-transform: uppercase;
+  }
+
+  h2 {
+    font-size: var(--omp-step-4);
+    text-transform: uppercase;
+  }
+
+  h3 {
+    font-size: var(--omp-step-2);
+  }
+
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  [data-numeric],
+  .tnum {
+    font-family: var(--omp-font-mono);
+    font-feature-settings: 'tnum' 1, 'lnum' 1;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  /* Long lists hint. Used on Clients / Products / Orders list rows. */
+  .cv-auto > * {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 64px;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+/* — A11y: focus + skip link — */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 1rem;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  background: var(--omp-ink);
+  color: var(--omp-bg);
+  font-family: var(--omp-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: top var(--duration-fast) var(--easing);
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Reduced motion: replace orchestrated entries with crossfade only. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Selection. Subtle, brand-tinted. */
+::selection {
+  background: var(--omp-accent);
+  color: var(--omp-accent-ink);
+}

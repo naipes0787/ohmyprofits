@@ -1,0 +1,139 @@
+/* =============================================================================
+ * ohMyProfits — design tokens
+ * Kirken-inspired bold editorial / contemporary craft direction.
+ *
+ * Source-of-truth variables live under the --omp-* namespace so they don't
+ * collide with Tailwind v4's --color-* / --font-* / --text-* / --radius-*
+ * theme keys. main.css's @theme block maps the public theme keys to these.
+ * ============================================================================= */
+
+:root {
+  color-scheme: light dark;
+
+  /* — Light theme — */
+  --omp-bg: #f2efe9;
+  --omp-surface: #ffffff;
+  --omp-surface-sunk: #ebe7df;
+  --omp-ink: #0b0b0c;
+  --omp-ink-muted: #5a5a5e;
+  --omp-line: rgba(11, 11, 12, 0.12);
+  --omp-line-strong: rgba(11, 11, 12, 0.32);
+
+  --omp-accent: #e5601f; /* Kirken orange */
+  --omp-accent-ink: #0b0b0c;
+  /* Darkened orange for body-size text on cream — passes AA 4.5:1 where the
+     brand orange (3:1) only clears AA-Large. Use --omp-accent for fills,
+     icons, large display text; use --omp-accent-text for small/body text. */
+  --omp-accent-text: #a04212;
+  --omp-accent-2: #1f5fbf; /* Kirken blue */
+  --omp-positive: #2f7a3e;
+  /* Darkened from #e0a21a so small text on cream surfaces clears WCAG AA
+     (4.5:1 against --omp-bg). Visually still amber. */
+  --omp-warning: #8a5a00;
+  --omp-danger: #b0331c;
+  --omp-lavender: #c9b8e0;
+
+  --focus-ring: 0 0 0 2px var(--omp-bg), 0 0 0 4px var(--omp-accent-2);
+
+  /* — Type — */
+  --omp-font-display:
+    'Archivo', 'Archivo Black', ui-sans-serif, system-ui, sans-serif;
+  --omp-font-body:
+    'General Sans', 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+  --omp-font-mono:
+    'JetBrains Mono', 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo,
+    monospace;
+
+  /* Mobile minor third 1.250 */
+  --omp-step--1: 0.8rem;
+  --omp-step-0: 1rem;
+  --omp-step-1: 1.25rem;
+  --omp-step-2: 1.563rem;
+  --omp-step-3: 1.953rem;
+  --omp-step-4: 2.441rem;
+  --omp-step-5: 3.052rem;
+  --omp-step-6: 3.815rem;
+
+  --omp-radius-xs: 2px;
+  --omp-radius-sm: 4px;
+  --omp-radius-md: 6px;
+
+  --shadow-press: inset 0 2px 0 0 rgba(0, 0, 0, 0.18);
+
+  --duration-fast: 120ms;
+  --duration-base: 220ms;
+  --easing: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Desktop: perfect fourth 1.333 */
+@media (min-width: 1024px) {
+  :root {
+    --omp-step--1: 0.844rem;
+    --omp-step-0: 1rem;
+    --omp-step-1: 1.333rem;
+    --omp-step-2: 1.777rem;
+    --omp-step-3: 2.369rem;
+    --omp-step-4: 3.157rem;
+    --omp-step-5: 4.209rem;
+    --omp-step-6: 5.61rem;
+  }
+}
+
+/* — Dark theme — accents lifted ~6% luminance for AA contrast. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --omp-bg: #0b0b0c;
+    --omp-surface: #141416;
+    --omp-surface-sunk: #08080a;
+    --omp-ink: #f2efe9;
+    --omp-ink-muted: #9a9a9e;
+    --omp-line: rgba(242, 239, 233, 0.14);
+    --omp-line-strong: rgba(242, 239, 233, 0.36);
+
+    --omp-accent: #f57333;
+    --omp-accent-ink: #0b0b0c;
+    --omp-accent-text: #f57333; /* In dark mode the lifted orange already clears AA on the dark bg. */
+    --omp-accent-2: #5b8df0;
+    --omp-positive: #56a86a;
+    --omp-warning: #f0bc46;
+    --omp-danger: #d65a44;
+    --omp-lavender: #d8c9eb;
+
+    --focus-ring: 0 0 0 2px var(--omp-bg), 0 0 0 4px var(--omp-accent-2);
+  }
+}
+
+/* Honor the Zustand-persisted theme preference; .theme-* wins over media. */
+:root.theme-light {
+  color-scheme: light;
+  --omp-bg: #f2efe9;
+  --omp-surface: #ffffff;
+  --omp-surface-sunk: #ebe7df;
+  --omp-ink: #0b0b0c;
+  --omp-ink-muted: #5a5a5e;
+  --omp-line: rgba(11, 11, 12, 0.12);
+  --omp-line-strong: rgba(11, 11, 12, 0.32);
+  --omp-accent: #e5601f;
+  --omp-accent-text: #a04212;
+  --omp-accent-2: #1f5fbf;
+  --omp-positive: #2f7a3e;
+  --omp-warning: #8a5a00;
+  --omp-danger: #b0331c;
+}
+
+:root.theme-dark {
+  color-scheme: dark;
+  --omp-bg: #0b0b0c;
+  --omp-surface: #141416;
+  --omp-surface-sunk: #08080a;
+  --omp-ink: #f2efe9;
+  --omp-ink-muted: #9a9a9e;
+  --omp-line: rgba(242, 239, 233, 0.14);
+  --omp-line-strong: rgba(242, 239, 233, 0.36);
+  --omp-accent: #f57333;
+  --omp-accent-text: #f57333;
+  --omp-accent-2: #5b8df0;
+  --omp-positive: #56a86a;
+  --omp-warning: #f0bc46;
+  --omp-danger: #d65a44;
+}
