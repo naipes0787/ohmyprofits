@@ -4,8 +4,7 @@ interface BrandMarkProps {
 }
 
 /**
- * Chevron arrow mark — quoted from the Kirken wordmark glyph.
- * Used as the favicon/PWA icon and a quiet brand presence on auth + empty states.
+ * Chevron arrow mark used as the favicon/PWA icon and brand presence on auth + empty states.
  */
 export function BrandMark({ className, title = 'ohMyProfits' }: BrandMarkProps) {
   return (

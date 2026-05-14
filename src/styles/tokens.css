@@ -1,6 +1,6 @@
 /* =============================================================================
  * ohMyProfits — design tokens
- * Kirken-inspired bold editorial / contemporary craft direction.
+ * Bold editorial / contemporary craft design direction.
  *
  * Source-of-truth variables live under the --omp-* namespace so they don't
  * collide with Tailwind v4's --color-* / --font-* / --text-* / --radius-*
@@ -19,13 +19,13 @@
   --omp-line: rgba(11, 11, 12, 0.12);
   --omp-line-strong: rgba(11, 11, 12, 0.32);
 
-  --omp-accent: #e5601f; /* Kirken orange */
+  --omp-accent: #e5601f; /* primary orange */
   --omp-accent-ink: #0b0b0c;
   /* Darkened orange for body-size text on cream — passes AA 4.5:1 where the
      brand orange (3:1) only clears AA-Large. Use --omp-accent for fills,
      icons, large display text; use --omp-accent-text for small/body text. */
   --omp-accent-text: #a04212;
-  --omp-accent-2: #1f5fbf; /* Kirken blue */
+  --omp-accent-2: #1f5fbf; /* secondary blue */
   --omp-positive: #2f7a3e;
   /* Darkened from #e0a21a so small text on cream surfaces clears WCAG AA
      (4.5:1 against --omp-bg). Visually still amber. */

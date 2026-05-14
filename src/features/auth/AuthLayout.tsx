@@ -35,7 +35,7 @@ export function AuthLayout() {
 
           <footer className="text-ink-muted mt-8 text-xs">
             <p className="font-mono uppercase tracking-[0.24em]">
-              © Kirken Studio · ohMyProfits
+              © ohMyProfits
             </p>
           </footer>
         </main>

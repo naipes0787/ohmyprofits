@@ -1,6 +1,6 @@
 # ohMyProfits
 
-A production-grade React PWA for managing **Clients**, **Products**, and **Orders**. Built with the Kirken visual direction — bold editorial / contemporary craft, not generic SaaS dashboard.
+A production-grade React PWA for managing **Clients**, **Products**, and **Orders**. Bold editorial / contemporary craft design — not a generic SaaS dashboard.
 
 > See [`PROMPT.md`](./PROMPT.md) for the full specification. That document is the single source of truth for scope, design intent, and security posture.
 

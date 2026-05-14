@@ -10,9 +10,7 @@ import { cn } from '@shared/lib/cn';
 import { Field } from './Field';
 
 /**
- * Radix-backed Select styled to the Kirken direction. The trigger uses the
- * same low-chrome treatment as Input. Items are uppercase mono in the dropdown
- * to echo brewery batch stamp typography.
+ * Radix-backed Select. The trigger uses the same low-chrome treatment as Input.
  */
 
 export interface SelectItem {
