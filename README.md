@@ -21,23 +21,58 @@ A production-grade React PWA for managing **Clients**, **Products**, and **Order
 
 ## Local development
 
-Prerequisites: Node 20.18+, pnpm 9+, Docker Desktop, the [Supabase CLI](https://supabase.com/docs/guides/cli).
+**Prerequisites:** Node 20.18+, pnpm 9+, Docker Desktop running.
+
+The Supabase CLI is a local dev dependency — no global install needed.
 
 ```bash
 pnpm install
 cp .env.example .env.local
-
-# Boot the local Postgres + Auth + Storage stack via the Supabase CLI.
-pnpm supabase:start
-
-# Apply migrations and seed.
-pnpm supabase:reset
-pnpm supabase:seed
-
-pnpm dev
 ```
 
-`supabase start` prints the local anon key + service-role key + DB URL. Paste them into `.env.local`.
+Boot the local Postgres + Auth + Storage stack:
+
+```bash
+pnpm supabase:start
+```
+
+`supabase start` prints the local **anon key** and **service-role key**. Paste them into `.env.local`:
+
+```
+VITE_SUPABASE_URL=http://127.0.0.1:54321
+VITE_SUPABASE_ANON_KEY=<anon key from supabase start>
+SUPABASE_SERVICE_ROLE_KEY=<service-role key from supabase start>
+SUPABASE_DB_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres
+```
+
+Apply migrations, then seed demo data:
+
+```bash
+pnpm supabase:reset
+pnpm supabase:seed
+```
+
+Start the dev server:
+
+```bash
+pnpm dev   # http://localhost:5173
+```
+
+Demo login after seeding: `kirken@ohmyprofits.local` / `kirken-demo-passphrase-2026`
+
+### Troubleshooting
+
+**`supabase db reset` fails with 502** — the bundled CLI version has a known container-restart bug. Update it:
+
+```bash
+pnpm add -D supabase@latest
+```
+
+Then retry `pnpm supabase:reset`.
+
+**`Insert failed on clients: name resolution failed`** — migrations haven't been applied yet. Run `pnpm supabase:reset` before `pnpm supabase:seed`.
+
+**Port 5173 or 54321 already in use** — another process is holding the port. Find and stop it, or restart Docker Desktop.
 
 ## Scripts
 
@@ -105,6 +140,6 @@ That work is tracked as a future migration; the SPA flow is functionally complet
 
 Captured in [`vercel.json`](vercel.json) (CSP + HSTS + frame-ancestors none + Permissions-Policy minimized). Every Postgres table has Row Level Security enabled with `owner_id = auth.uid()` policies. The `owner_id` is set by a `BEFORE INSERT` trigger from `auth.uid()` — clients never write it. Order numbers are generated server-side per-owner per-year.
 
-## What is NOT yet built
+## Production deploy
 
-This commit covers **build-order steps 1–4**: bootstrap, schema, auth shell, and the design-system primitives in [src/shared/ui/](src/shared/ui/). Steps 5–10 (Clients, Products + Categories, Orders, PWA polish, E2E + axe + Lighthouse, production deploy) land in subsequent commits. Page stubs render as designed empty states so the shell can be reviewed visually right now.
+See [`docs/DEPLOY.md`](docs/DEPLOY.md) for the runbook (Supabase project provisioning, Vercel env config, post-deploy verification, CSP debug, rollback). [`docs/LIGHTHOUSE.md`](docs/LIGHTHOUSE.md) covers manual Lighthouse runs against the production preview.

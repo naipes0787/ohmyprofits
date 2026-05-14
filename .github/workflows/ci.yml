@@ -33,3 +33,82 @@ jobs:
       - name: Audit dependencies (high+)
         run: pnpm audit --audit-level=high
         continue-on-error: false
+
+      # A08 — Software & Data Integrity Failures: confirm the build actually
+      # consumed the right Supabase project. Ref must match the URL host so a
+      # misconfigured deploy can't silently point at the wrong project.
+      - name: Verify Supabase project ref ↔ URL host
+        if: env.VITE_SUPABASE_URL != ''
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PROJECT_REF: ${{ secrets.VITE_SUPABASE_PROJECT_REF }}
+        run: |
+          host=$(node -e "process.stdout.write(new URL(process.env.VITE_SUPABASE_URL).host.split('.')[0])")
+          if [ "$host" != "$VITE_SUPABASE_PROJECT_REF" ]; then
+            echo "::error::VITE_SUPABASE_PROJECT_REF ($VITE_SUPABASE_PROJECT_REF) does not match URL host subdomain ($host)"
+            exit 1
+          fi
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: verify
+    timeout-minutes: 20
+    # Only run E2E on main + on PRs that touched code likely to affect the
+    # critical path. Keeps CI snappy for docs-only changes.
+    if: |
+      github.event_name == 'push' ||
+      github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.3
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Boot the local Supabase stack so E2E can exercise real RLS + auth.
+      - name: Start Supabase local stack
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Run supabase start
+        run: supabase start
+
+      - name: Apply migrations + seed
+        env:
+          VITE_SUPABASE_URL: http://127.0.0.1:54321
+          VITE_SUPABASE_ANON_KEY: ${{ env.SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_PROJECT_REF: local
+          VITE_APP_ENV: production
+        run: |
+          # `supabase start` exports SUPABASE_* envs in its summary; we copy
+          # the service role into the seed env explicitly here.
+          export SUPABASE_SERVICE_ROLE_KEY=$(supabase status -o env | grep '^SERVICE_ROLE_KEY=' | cut -d'=' -f2-)
+          pnpm supabase:seed
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run E2E (chromium + mobile)
+        env:
+          CI: '1'
+          E2E_RESET_DB: '0' # already seeded above
+          VITE_SUPABASE_URL: http://127.0.0.1:54321
+          VITE_SUPABASE_PROJECT_REF: local
+          VITE_APP_ENV: production
+        run: pnpm test:e2e
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 14

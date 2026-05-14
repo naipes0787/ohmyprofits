@@ -1,11 +1,25 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import path from 'node:path';
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  // Derive the Supabase API host at build time so the Workbox matchers cache
+  // the right origin per environment (local 127.0.0.1 vs prod *.supabase.co)
+  // without leaking a hardcoded development host into the production SW.
+  const env = loadEnv(mode, process.cwd(), '');
+  const supabaseUrl = env['VITE_SUPABASE_URL'] ?? 'http://127.0.0.1:54321';
+  const supabaseHost = (() => {
+    try {
+      return new URL(supabaseUrl).host;
+    } catch {
+      return '';
+    }
+  })();
+
+  return {
   plugins: [
     react(),
     tailwindcss(),
@@ -57,9 +71,7 @@ export default defineConfig({
             urlPattern: ({ url, request }) =>
               request.method === 'GET' &&
               url.pathname.startsWith('/rest/v1/') &&
-              (url.host.includes('supabase.co') ||
-                url.host.includes('127.0.0.1') ||
-                url.host.includes('localhost')),
+              url.host === supabaseHost,
             handler: 'StaleWhileRevalidate',
             options: {
               cacheName: 'supabase-rest',
@@ -84,9 +96,7 @@ export default defineConfig({
                 request.method === 'DELETE' ||
                 request.method === 'PUT') &&
               url.pathname.startsWith('/rest/v1/') &&
-              (url.host.includes('supabase.co') ||
-                url.host.includes('127.0.0.1') ||
-                url.host.includes('localhost')),
+              url.host === supabaseHost,
             handler: 'NetworkOnly',
             method: 'POST',
             options: {
@@ -143,4 +153,5 @@ export default defineConfig({
     port: 4173,
     strictPort: true,
   },
+  };
 });
