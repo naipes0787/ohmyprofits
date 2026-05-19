@@ -133,7 +133,7 @@ export default defineConfig(({ mode }) => {
     },
   },
   build: {
-    target: 'es2022',
+    target: ['es2020', 'safari15'],
     sourcemap: true,
     rollupOptions: {
       output: {

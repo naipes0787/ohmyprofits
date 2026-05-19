@@ -38,9 +38,19 @@ export interface FormatOptions {
 export function formatMoney(value: Money | number | string, opts: FormatOptions = {}): string {
   const { currency = 'USD', locale } = opts;
   const num = value instanceof Decimal ? value.toNumber() : Number(value);
-  return new Intl.NumberFormat(locale ?? navigator.language, {
-    style: 'currency',
-    currency,
-    currencyDisplay: 'narrowSymbol',
-  }).format(num);
+  const resolvedLocale = locale ?? navigator.language;
+  try {
+    return new Intl.NumberFormat(resolvedLocale, {
+      style: 'currency',
+      currency,
+      currencyDisplay: 'narrowSymbol',
+    }).format(num);
+  } catch {
+    // 'narrowSymbol' throws RangeError on iOS 15 Safari — fall back to 'symbol'
+    return new Intl.NumberFormat(resolvedLocale, {
+      style: 'currency',
+      currency,
+      currencyDisplay: 'symbol',
+    }).format(num);
+  }
 }
